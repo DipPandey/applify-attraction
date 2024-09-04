@@ -29,8 +29,8 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
-      <header className="bg-white shadow-md p-4">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-800 to-gray-900 text-white">
+      <header className="bg-gray-900 shadow-md p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center">
             <h1 className="text-2xl font-bold mr-4">Applify Attraction</h1>
@@ -45,7 +45,7 @@ export default function Dashboard() {
         </div>
       </header>
       <main className="flex-grow container mx-auto mt-8 p-4">
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="bg-gray-800 rounded-lg shadow-md p-6">
           <h2 className="text-xl font-bold mb-4">Texting Practice for Men</h2>
           <ChatInterface />
         </div>

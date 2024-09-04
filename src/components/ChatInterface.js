@@ -68,29 +68,32 @@ export default function ChatInterface() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-grow overflow-y-auto mb-4 p-4 border rounded bg-gray-50">
+      <div className="bg-gray-700 text-white p-2 rounded-t text-center font-semibold">
+        You are chatting with an AI woman
+      </div>
+      <div className="flex-grow overflow-y-auto mb-4 p-4 border rounded bg-gray-600">
         {messages.map((message, index) => (
           <div key={index} className={`mb-2 ${message.role === 'assistant' ? 'text-left' : 'text-right'}`}>
-            <span className={`inline-block p-2 rounded ${message.role === 'assistant' ? 'bg-blue-100' : 'bg-green-100'}`}>
+            <span className={`inline-block p-2 rounded ${message.role === 'assistant' ? 'bg-blue-500 text-white' : 'bg-green-500 text-white'}`}>
               {message.content}
             </span>
           </div>
         ))}
-        {(loadingStarters || loadingReply) && <div className="text-center">AI is typing...</div>}
+        {(loadingStarters || loadingReply) && <div className="text-center text-white">AI is typing...</div>}
       </div>
       <form onSubmit={handleSendMessage} className="flex mb-4">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="flex-grow px-3 py-2 border rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-grow px-3 py-2 border rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white placeholder-gray-400"
           placeholder="Type your message..."
         />
         <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600 transition duration-200">Send</button>
         <button
           type="button"
           onClick={generateStarters}
-          className="bg-orange-400 text-white px-4 py-2 rounded ml-2 hover:bg-orange-800 transition duration-200"
+          className="bg-orange-500 text-white px-4 py-2 rounded ml-2 hover:bg-orange-600 transition duration-200"
           disabled={loadingStarters || loadingReply}
         >
           {loadingStarters ? 'Generating...' : 'Generate Starters'}
@@ -105,9 +108,9 @@ export default function ChatInterface() {
         </button>
       </form>
       {starters.length > 0 && (
-        <div className="mt-4 p-4 bg-green-100 rounded">
-          <h3 className="font-semibold mb-2">Conversation Starters:</h3>
-          <ul className="list-decimal pl-5">
+        <div className="mt-4 p-4 bg-gray-700 rounded">
+          <h3 className="font-semibold mb-2 text-white">Conversation Starters:</h3>
+          <ul className="list-decimal pl-5 text-white">
             {starters.map((starter, index) => (
               <li key={index} className="mb-2 flex justify-between items-center">
                 <span>{starter}</span>
@@ -123,8 +126,8 @@ export default function ChatInterface() {
         </div>
       )}
       {reply && (
-        <div className="mt-4 p-4 bg-green-100 rounded flex justify-between items-center">
-          <p>{reply}</p>
+        <div className="mt-4 p-4 bg-gray-700 rounded flex justify-between items-center">
+          <p className="text-white">{reply}</p>
           <button
             onClick={() => handleCopy(reply)}
             className="ml-2 bg-gray-200 text-gray-700 px-2 py-1 rounded hover:bg-gray-300 transition duration-200"
