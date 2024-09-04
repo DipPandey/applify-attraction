@@ -1,5 +1,5 @@
 import { connectToDatabase } from '../../../lib/mongodb';
-import Tips from '../../../models/Tips';
+import Conversation from '../../../models/Conversation';
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -9,8 +9,9 @@ export default async function handler(req, res) {
   switch (method) {
     case 'GET':
       try {
-        const templates = await Tips.find({ category: 'templates' });
-        res.status(200).json({ success: true, data: templates });
+        const { userId } = req.query;
+        const conversations = await Conversation.find({ userId }).sort({ updatedAt: -1 });
+        res.status(200).json({ success: true, data: conversations });
       } catch (error) {
         res.status(400).json({ success: false, error: error.message });
       }
@@ -18,8 +19,8 @@ export default async function handler(req, res) {
 
     case 'POST':
       try {
-        const template = await Tips.create({ ...req.body, category: 'templates' });
-        res.status(201).json({ success: true, data: template });
+        const conversation = await Conversation.create(req.body);
+        res.status(201).json({ success: true, data: conversation });
       } catch (error) {
         res.status(400).json({ success: false, error: error.message });
       }

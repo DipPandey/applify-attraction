@@ -6,10 +6,10 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const user = getCurrentUser();
-    console.log('Current user:', user); // Add this line
-    if (user) {
-      setUser(user);
+    const currentUser = getCurrentUser();
+    console.log('Current user:', currentUser);
+    if (currentUser) {
+      setUser(currentUser);
     }
     setLoading(false);
   }, []);

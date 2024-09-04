@@ -9,7 +9,7 @@ export const register = async (username, email, password) => {
 
 export const login = async (email, password) => {
   const response = await axios.post(`${API_URL}/login`, { email, password });
-  console.log('Login response:', response.data); // Add this line
+  console.log('Login response:', response.data);
   if (response.data.token) {
     localStorage.setItem('user', JSON.stringify({
       token: response.data.token,
@@ -25,5 +25,6 @@ export const logout = () => {
 };
 
 export const getCurrentUser = () => {
-  return JSON.parse(localStorage.getItem('user'));
+  const user = localStorage.getItem('user');
+  return user ? JSON.parse(user) : null;
 };

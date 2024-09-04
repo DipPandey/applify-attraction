@@ -1,53 +1,51 @@
 import { useState } from 'react';
-import axios from 'axios';
+import { useTimingAdvice } from '../hooks/useTimingAdvice';
+import { useToneAnalysis } from '../hooks/useToneAnalysis';
 
-export default function MessagingInterface() {
-  const [messages, setMessages] = useState([]);
+export default function MessagingInterface({ onSendMessage, messages }) {
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const lastMessage = messages[messages.length - 1];
+  const timingAdvice = useTimingAdvice(lastMessage?.timestamp);
+  const toneAnalysis = useToneAnalysis(input);
 
-  const sendMessage = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
-
-    const userMessage = { role: 'user', content: input };
-    setMessages([...messages, userMessage]);
-    setInput('');
-    setLoading(true);
-
-    try {
-      const response = await axios.post('/api/chat', { messages: [...messages, userMessage] });
-      setMessages([...messages, userMessage, response.data.message]);
-    } catch (error) {
-      console.error('Error sending message:', error);
+    if (input.trim()) {
+      onSendMessage(input);
+      setInput('');
     }
-
-    setLoading(false);
   };
 
   return (
-    <div>
+    <div className="mt-6">
       <h2 className="text-xl font-bold mb-4">Messaging Practice</h2>
-      <div className="h-64 overflow-y-auto mb-4 p-4 border rounded">
-        {messages.map((msg, index) => (
-          <div key={index} className={`mb-2 ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
-            <span className={`inline-block p-2 rounded ${msg.role === 'user' ? 'bg-blue-100' : 'bg-gray-100'}`}>
-              {msg.content}
-            </span>
-          </div>
-        ))}
-        {loading && <div className="text-center">AI is typing...</div>}
-      </div>
-      <form onSubmit={sendMessage} className="flex">
-        <input
-          type="text"
+      <form onSubmit={handleSubmit} className="mb-4">
+        <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="flex-grow px-3 py-2 border rounded-l"
+          className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+          rows="4"
           placeholder="Type your message..."
-        />
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-r">Send</button>
+        ></textarea>
+        <button
+          type="submit"
+          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Send
+        </button>
       </form>
+      {timingAdvice && (
+        <div className="mb-4 p-2 bg-yellow-100 rounded">
+          <p className="font-semibold">Timing Advice:</p>
+          <p>{timingAdvice}</p>
+        </div>
+      )}
+      {toneAnalysis && (
+        <div className="mb-4 p-2 bg-green-100 rounded">
+          <p className="font-semibold">Tone Analysis:</p>
+          <p>{toneAnalysis}</p>
+        </div>
+      )}
     </div>
   );
 }
