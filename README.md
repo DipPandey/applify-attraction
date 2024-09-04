@@ -1,6 +1,6 @@
 # Applify Attraction
 
-Applify Attraction is a web application designed to help men improve their texting game and enhance their dating skills. Built with Next.js, this app provides a platform for users to practice conversation starters, engage in AI-powered messaging simulations, and receive personalized advice on dating and attraction.
+A fun web app i built to practice full stacking, its an AI heavy app that helps men imporve their texting game with women. the AI emulates as a women for you to practice your texting abilities
 
 ## Features
 
