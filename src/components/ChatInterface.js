@@ -57,7 +57,11 @@ export default function ChatInterface() {
     setStarters([]); // Clear starters content
     try {
       const lastMessage = messages[messages.length - 1];
-      const response = await axios.post('/api/tips/generate', { message: lastMessage.content });
+      const shouldReplyShort = Math.random() < 0.5; // 50% chance to reply short
+      const response = await axios.post('/api/tips/generate', { 
+        message: lastMessage.content,
+        shortReply: shouldReplyShort
+      });
       setReply(response.data.message);
       setGeneratedContent(response.data.message);
     } catch (error) {
