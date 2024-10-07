@@ -9,14 +9,24 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { message } = req.body;
+  const { message, replyStyle } = req.body;
+
+  const replyStylePrompts = {
+    confident: "You are a confident man who knows what he wants and isn't afraid to go after it. Keep it playful and suggest meeting up.",
+    humorous: "You are a witty man who uses humor to keep the conversation light and engaging. Make a playful hint about future plans.",
+    empathetic: "You are a caring man who listens and responds with empathy. Playfully suggest a face-to-face meeting.",
+    direct: "You are a straightforward man who communicates clearly. Charmingly suggest a date.",
+    playful: "You are a playful man who enjoys teasing and light-hearted banter. Suggest a fun activity you could do together."
+  };
+
+  const prompt = `${replyStylePrompts[replyStyle]} Your job is to provide a short and playful reply to a message from a woman, with the aim of moving the conversation towards a date.`;
 
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
-        { role: "system", content: "You are a professional dating coach specializing in helping men build attraction, fun, and intimacy with women. Your job is to provide the best possible reply to a message from a woman in a way that is engaging, respectful, confident, and fun. Use teasing, push and pull techniques, and an unapologetic flirting style inspired by Craig Ferguson. Focus on building a man-to-woman connection rather than platonic conversations. Keep the reply concise and to the point. advance towards a date when you see she is interested, but don't be too pushy. " },
-        { role: "user", content: `Message from the girl: "${message}"` }
+        { role: "system", content: prompt },
+        { role: "user", content: `Message from the woman: "${message}"` }
       ],
     });
 

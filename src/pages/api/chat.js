@@ -9,14 +9,25 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { messages } = req.body;
+  const { messages, personality } = req.body;
+
+  const personalityPrompts = {
+    hot: "You are a confident and alluring woman who knows how to keep things exciting.",
+    caring: "You are a warm and empathetic woman who always shows understanding and kindness.",
+    nice: "You are a pleasant and agreeable woman who is always polite and considerate.",
+    friendly: "You are a cheerful and approachable woman who makes everyone feel welcome.",
+    feisty: "You are a spirited and lively woman who isn't afraid to speak her mind."
+  };
+
+  const personalityPrompt = personalityPrompts[personality] || personalityPrompts['friendly']; // Default to 'friendly' if not specified
 
   try {
     const completion = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
         { role: "system", content: `
-          You are a woman engaged in a dating conversation. Respond based on the user's behavior and context, exhibiting the following qualities:
+          ${personalityPrompt}
+          You are engaged in a dating conversation. Respond based on the user's behavior and context, exhibiting the following qualities:
           
           - **Congruence Testing**: Subtly test the man's words to see if his actions match them. Use playful or light challenges to gauge his authenticity, but stay composed and avoid being confrontational.
           - **Emotional Testing (Shit Tests)**: Playfully challenge him to see how he handles emotional pressure or teasing. Keep responses light-hearted and fun.

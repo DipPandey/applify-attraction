@@ -1,25 +1,34 @@
-import { connectToDatabase } from '../../../lib/mongodb';
-import Tips from '../../../models/Tips';
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 export default async function handler(req, res) {
   const { method } = req;
 
-  await connectToDatabase();
-
   switch (method) {
     case 'GET':
-      try {
-        const dosAndDonts = await Tips.find({ category: 'dos-and-donts' });
-        res.status(200).json({ success: true, data: dosAndDonts });
-      } catch (error) {
-        res.status(400).json({ success: false, error: error.message });
-      }
+      res.status(400).json({ success: false, error: 'GET method not supported without database' });
       break;
 
     case 'POST':
       try {
-        const tip = await Tips.create({ ...req.body, category: 'dos-and-donts' });
-        res.status(201).json({ success: true, data: tip });
+        const { prompt } = req.body;
+
+        // Generate AI-based content
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4",
+          messages: [
+            { role: "system", content: "You are an expert in providing dating advice, focusing on dos and don'ts." },
+            { role: "user", content: prompt }
+          ],
+        });
+
+        const aiGeneratedContent = completion.choices[0].message.content;
+
+        // Return the AI-generated dos and don'ts
+        res.status(201).json({ success: true, data: aiGeneratedContent });
       } catch (error) {
         res.status(400).json({ success: false, error: error.message });
       }

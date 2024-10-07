@@ -9,15 +9,38 @@ export default async function handler(req, res) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
+  const {
+    tone = 'fun',
+    numberOfStarters = 5,
+    includePickUpLines = true,
+    maxLength = 100, // Maximum length of each starter
+    language = 'en', // Language option
+    theme = 'general', // Theme or category
+    includeEmojis = false // Option to include emojis
+  } = req.body;
+
   try {
+    const prompt = `
+      Provide ${numberOfStarters} unique and engaging conversation starters for a man to use with a woman. Each starter should be no longer than ${maxLength} characters and should be engaging, respectful, confident, and fun. Some can be more serious, but most should be funny and engaging. Add a little bit of mystery to each one.
+      ${includePickUpLines ? 'Include 2 pick-up lines that are funny and engaging, but not too cheesy.' : ''}
+      ${includeEmojis ? 'Include emojis to make the starters more lively.' : ''}
+      Ensure the output is formatted as natural, conversational text without bullet points or quotes.
+      Tone: ${tone}
+      Theme: ${theme}
+      Language: ${language}
+    `;
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4",
       messages: [
-        { role: "system", content: "You are a professional dating coach specializing in helping men build attraction, fun, and intimacy with women. Your job is to provide the best possible conversation starters that are engaging, respectful, confident, and fun. Use teasing, push and pull techniques, and an unapologetic flirting style inspired by Craig Ferguson. Focus on building a man-to-woman connection rather than platonic conversations. Provide 5 unique and engaging conversation starters, each no longer than one sentence. some can be more serious, but most should be funny and engaging. add a little bit of mystery to each one. add 2  pick up lines that are funny and engaging. but not too cheesy. " }
+        { role: "system", content: prompt }
       ],
     });
 
-    const starters = completion.choices[0].message.content.split('\n').filter(starter => starter.trim() !== '');
+    const starters = completion.choices[0].message.content
+      .split('\n')
+      .map(starter => starter.replace(/^\d+\.\s*/, '').replace(/^"|"$/g, '').trim()) // Remove bullet points, numbering, and quotes
+      .filter(starter => starter !== '');
 
     res.status(200).json({ starters });
   } catch (error) {
